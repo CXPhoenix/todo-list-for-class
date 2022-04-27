@@ -2,8 +2,9 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "cross-env TAILWIND_MODE=build vite build",
-    "serve": "vite preview"
+    "build": "vite build",
+    "serve": "vite preview",
+    "commit": "git-cz"
   },
   "devDependencies": {
     "prettier": "^2.5.1",
@@ -12,6 +13,7 @@
     "vite": "^2.4.4"
   },
   "dependencies": {
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "git-cz": "^4.8.0"
   }
 }

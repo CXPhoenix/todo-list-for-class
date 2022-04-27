@@ -11,15 +11,21 @@ const todoDatas = [
 
 const todoForm = document.querySelector("#to-do-form");
 const searchInput = document.querySelector("#search-input-area");
-const showCompleteCheckBox = document.querySelector("#show-complete");
-const showCompleteText = document.querySelector("#show-complete-text");
+const hideCompleteCheckBox = document.querySelector("#hide-complete");
+const hideCompleteText = document.querySelector("#hide-complete-text");
 const todoList = document.querySelector("#to-do-list");
+
+hideCompleteCheckBox.checked =
+  getHideCompleteStateToLocalStorage() === "undefined"
+    ? false
+    : getHideCompleteStateToLocalStorage();
 
 document.addEventListener("DOMContentLoaded", function () {
   if (window.localStorage.getItem("todoDatas")) {
     todoDatas.splice(0, todoDatas.length);
     todoDatas.push(...getDatasFromLocalStorage());
   }
+
   renderTodoItems();
 });
 
@@ -54,8 +60,21 @@ todoForm["input-area"].addEventListener("input", (e) => {
 
 searchInput.addEventListener("input", function (e) {
   if (e.target.value === "") {
+    if (hideCompleteCheckBox.checked) {
+      const result = todoDatas.filter((data) => data.state !== "#complete");
+      renderTodoItems(result);
+      return;
+    }
     renderTodoItems();
   } else {
+    if (hideCompleteCheckBox.checked) {
+      const result = todoDatas.filter(
+        (data) =>
+          data.content.includes(e.target.value) && data.state !== "#complete"
+      );
+      renderTodoItems(result);
+      return;
+    }
     const result = todoDatas.filter((data) =>
       data.content.includes(e.target.value)
     );
@@ -63,24 +82,35 @@ searchInput.addEventListener("input", function (e) {
   }
 });
 
-showCompleteCheckBox.addEventListener("change", function (e) {
+hideCompleteCheckBox.addEventListener("change", function (e) {
   if (e.target.checked) {
-    showCompleteText.innerText = "顯示已完成項目";
+    hideCompleteText.innerText = "顯示已完成項目";
     const result = todoDatas.filter((data) => data.state === "#todo");
     renderTodoItems(result);
   } else {
-    showCompleteText.innerText = "隱藏已完成項目";
+    hideCompleteText.innerText = "隱藏已完成項目";
     renderTodoItems();
   }
+  saveHideCompleteStateToLocalStorage();
 });
 
 /**
  *
- * @param {Object[]} datas default is todoDatas
+ * @param {Array} datas default is todoDatas
  */
 function renderTodoItems(datas = todoDatas) {
   todoList.innerHTML = "";
-  datas.forEach((data) => renderTodoItem(data));
+  if (hideCompleteCheckBox.checked) {
+    const result = datas.filter((data) => data.state === "#todo");
+    for (let i = result.length - 1; i >= 0; i--) {
+      renderTodoItem(result[i]);
+    }
+    saveDatasToLocalStorage();
+    return;
+  }
+  for (let i = datas.length - 1; i >= 0; i--) {
+    renderTodoItem(datas[i]);
+  }
   saveDatasToLocalStorage();
 }
 
@@ -102,12 +132,13 @@ function renderTodoItem({ content_id, content, timestamp, state }) {
   item.querySelector("#item-content").innerText = content;
   item.querySelector("#item-timestamp").innerText = timestamp;
   if (state === "#complete") {
-    item.querySelector("#complete-btn").innerText = "取消完成";
+    item.querySelector("#complete-btn-text").innerText = "取消完成";
   }
   item.querySelector("#complete-btn").addEventListener("click", (e) => {
     const itemIndex = todoDatas.findIndex(
       (data) => data.content_id === content_id
     );
+    console.log(e);
     if (e.target.innerText === "完成") {
       todoDatas[itemIndex].state = "#complete";
       e.target.innerText = "取消完成";
@@ -171,4 +202,15 @@ function saveDatasToLocalStorage() {
 
 function getDatasFromLocalStorage() {
   return JSON.parse(window.localStorage.getItem("todoDatas"));
+}
+
+function saveHideCompleteStateToLocalStorage() {
+  window.localStorage.setItem(
+    "hideComplete",
+    JSON.stringify(hideCompleteCheckBox.checked)
+  );
+}
+
+function getHideCompleteStateToLocalStorage() {
+  return JSON.parse(window.localStorage.getItem("hideComplete"));
 }

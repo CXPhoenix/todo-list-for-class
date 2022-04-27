@@ -83,18 +83,18 @@
           </label>
           <div id="show-complete-area" class="self-end px-3 md:self-center">
             <label
-              for="show-complete"
+              for="hide-complete"
               id="complete-show-switcher"
               class="relative flex flex-col items-center justify-center space-y-2"
             >
-              <input type="checkbox" id="show-complete" class="peer hidden" />
+              <input type="checkbox" id="hide-complete" class="peer hidden" />
               <div
                 class="h-8 w-16 rounded-3xl border-2 border-gray-200 peer-checked:border-0 peer-checked:bg-red-300"
               ></div>
               <div
                 class="absolute -top-1 left-4 h-10 w-10 rounded-full border-2 border-gray-300 bg-gradient-to-bl from-white to-gray-400 shadow-sm duration-300 peer-checked:translate-x-11 peer-checked:from-red-300 peer-checked:to-red-400"
               ></div>
-              <p id="show-complete-text" class="">隱藏已完成項目</p>
+              <p id="hide-complete-text" class="">隱藏已完成項目</p>
             </label>
           </div>
         </div>
@@ -180,6 +180,7 @@
         >
           <label for="item-demo-check" id="complete-btn">
             <span
+              id="complete-btn-text"
               class="cursor-pointer rounded-lg bg-green-600 py-2 px-8 text-white"
             >
               完成
